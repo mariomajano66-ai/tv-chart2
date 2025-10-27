@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Chart</title>
+  <style>html,body{margin:0;height:100%;}#tv{height:100%;}</style>
+</head>
+<body>
+  <div id="tv"></div>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const symbol = params.get('symbol') || 'SPY';  // e.g., NASDAQ:AAPL, NYSEARCA:SPY
+    const config = {
+      symbol,
+      dateRange: "1M",        // 1D, 5D, 1M, 3M, 6M, YTD, 1Y, 5Y, ALL
+      colorTheme: "light",    // or "dark"
+      isTransparent: false,
+      autosize: true,
+      locale: "en"
+    };
+    const s = document.createElement('script');
+    s.src = "https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js";
+    s.async = true;
+    s.innerHTML = JSON.stringify(config);
+    document.getElementById('tv').appendChild(s);
+  </script>
+</body>
+</html>
