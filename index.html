@@ -3,27 +3,54 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Chart</title>
-  <style>html,body{margin:0;height:100%;}#tv{height:100%;}</style>
+  <title>TV Candles</title>
+  <style>
+    html, body { margin:0; height:100%; background:#0b0f14; }
+    #wrap { height:100%; width:100%; }
+  </style>
 </head>
 <body>
-  <div id="tv"></div>
+  <div id="wrap"></div>
+
   <script>
-    const params = new URLSearchParams(location.search);
-    const symbol = params.get('symbol') || 'SPY';  // e.g., NASDAQ:AAPL, NYSEARCA:SPY
-    const config = {
-      symbol,
-      dateRange: "1M",        // 1D, 5D, 1M, 3M, 6M, YTD, 1Y, 5Y, ALL
-      colorTheme: "light",    // or "dark"
-      isTransparent: false,
-      autosize: true,
-      locale: "en"
-    };
-    const s = document.createElement('script');
-    s.src = "https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js";
-    s.async = true;
-    s.innerHTML = JSON.stringify(config);
-    document.getElementById('tv').appendChild(s);
+    function loadChart() {
+      const params = new URLSearchParams(location.search);
+      // Try ?symbol=NASDAQ:AAPL  (prefixes improve reliability)
+      const symbol = params.get('symbol') || 'NYSEARCA:SPY';
+
+      // Clear container and inject advanced-chart widget script with JSON config
+      const wrap = document.getElementById('wrap');
+      wrap.innerHTML = '';
+
+      const s = document.createElement('script');
+      s.src = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
+      s.async = true;
+
+      // style: 1 = Candlesticks
+      // interval: "D" (Daily). Try "60" (60-min), "W", etc.
+      const config = {
+        "symbol": symbol,
+        "interval": "D",
+        "timezone": "America/New_York",
+        "theme": "dark",           // "light" or "dark"
+        "style": "1",              // 1 = Candlesticks
+        "locale": "en",
+        "enable_publishing": false,
+        "hide_top_toolbar": false,
+        "hide_legend": false,
+        "save_image": false,
+        "allow_symbol_change": false,
+        "autosize": true,
+        "withdateranges": true,    // shows 1D/5D/1M/… buttons
+        "range": "12M"             // initial visible range; try "6M","1M","YTD","ALL"
+      };
+
+      s.innerHTML = JSON.stringify(config);
+      wrap.appendChild(s);
+    }
+
+    window.addEventListener('DOMContentLoaded', loadChart);
   </script>
 </body>
 </html>
+
